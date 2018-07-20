@@ -1,0 +1,93 @@
+# ----------------------------------
+# application endpoint configuration
+# ----------------------------------
+server:
+  port: {{SERVER_PORT}}
+  ssl:
+    key-store: {{KEYSTORE_LOCATION}}
+    key-store-password: {{KEYSTORE_PASSWORD}}
+
+truststore:
+  location: {{TRUSTSTORE_LOCATION}}
+  password: {{TRUSTSTORE_PASSWORD}}
+
+# ----------------------------------
+# OAuth2/JWT properties
+# ----------------------------------
+oauth:
+  signingKey: {{OAUTH_JWT_SIGNING_KEY}}
+
+
+# ---------------------------------------------
+# management endpoint configuration
+# ---------------------------------------------
+management:
+  server:
+    port: {{ADMIN_PORT}}
+    ssl:
+      enabled: true
+      key-store: {{KEYSTORE_LOCATION}}
+      key-password: {{KEYSTORE_PASSWORD}}
+  security:
+    user:
+      name: {{ADMIN_USER}}
+      password: {{ADMIN_PASSWORD}}
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health,info
+    jmx:
+      exposure:
+        exclude: "*"
+
+# ---------------------
+# Jackson configuration
+# ---------------------
+spring.jackson.serialization.indent_output: true
+spring.jackson.serialization.write_dates_as_timestamps: false
+
+# -------------------------------------------------------------
+# jasypt resolves the password from system environment variable
+# -------------------------------------------------------------
+jasypt:
+   encryptor:
+      password: {{MASTER_PASSWORD_ENV_REF}}
+
+
+# NOTE: This configuration is for embedded H2 database for this sample application
+#   which does not access the operational database such as Oracle. Test cases
+#   must use this database configuration. Also, the password is not set for
+#   this sample application.
+
+# --------------------------
+# Application Configuration
+# --------------------------
+spring:
+  datasource:
+    # note: `spring.datasource.*` properties are completely IGNORED by the `EmbeddedDatabaseBuilder`.
+    # see DatasourceConfiguration..
+#    url: "jdbc:h2:mem:testdb;MODE=Oracle;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+#    username: sa
+#    password:
+#    driverClassName: org.h2.Driver
+#    platform: h2
+#    initialize: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
+
+
+# log file location
+logging:
+  file: {{LOG_LOCATION}}
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(18971){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+    file: "[%d] [%-5level] [%thread] [%logger] - [%msg]%n"
+  level:
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    com.standard: WARN
+
